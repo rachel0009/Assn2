@@ -10,6 +10,7 @@ from geometry_msgs.msg import Twist
 from cv_bridge import CvBridge
 import cv2
 
+# Commenting logger to see qlearning
 class RedBall(Node):
   """
   A Node to analyse red balls in images and publish the results
@@ -33,14 +34,14 @@ class RedBall(Node):
 
   def step(self, action):
     if self.redball_position is None:
-        self.get_logger().info("No red ball detected, stopping movement.")
+        # self.get_logger().info("No red ball detected, stopping movement.")
         return
         
     twist = Twist()
     twist.angular.z = (action - 320) / 320 * (np.pi / 2)
     twist.linear.x = 0.2
 
-    self.get_logger().info(f"Publishing twist: {twist}")
+    # self.get_logger().info(f"Publishing twist: {twist}")
     self.twist_publisher.publish(twist)
 
   def listener_callback(self, msg):
@@ -70,10 +71,10 @@ class RedBall(Node):
             circled_orig = cv2.circle(frame, (int(circle[0]), int(circle[1])), int(circle[2]), (0,255,0),thickness=3)
             the_circle = (int(circle[0]), int(circle[1]))
             self.target_publisher.publish(self.br.cv2_to_imgmsg(circled_orig))
-            self.get_logger().info('ball detected')
+            # self.get_logger().info('ball detected')
     else:
         self.redball_position = None
-        self.get_logger().info('no ball detected')
+        # self.get_logger().info('no ball detected')
 
 class RedBallEnv(gym.Env):
     metadata = {"render_modes": "rgb_array", "render_fps": 4}
@@ -83,11 +84,7 @@ class RedBallEnv(gym.Env):
         self.redball = RedBall()
 
         self.step_count = 0
-
-        self.states = {}
         self.actions_dict = {}
-
-        self.state = 0
 
         self.observation_space = spaces.Dict({
             "position": spaces.Box(low=0, high=640, shape=(1,), dtype=np.int32)
