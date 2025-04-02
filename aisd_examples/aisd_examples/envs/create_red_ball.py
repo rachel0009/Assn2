@@ -35,7 +35,7 @@ class RedBall(Node):
     if self.redball_position is None:
         self.get_logger().info("No red ball detected, stopping movement.")
         return
-
+        
     twist = Twist()
     twist.angular.z = (action - 320) / 320 * (np.pi / 2)
     twist.linear.x = 0.2
@@ -89,7 +89,9 @@ class RedBallEnv(gym.Env):
 
         self.state = 0
 
-        self.observation_space = spaces.Box(low=0, high=640, shape=(1,), dtype=np.int32)
+        self.observation_space = spaces.Dict({
+            "spaces": spaces.Box(low=0, high=640, shape=(1,), dtype=np.int32)
+        })
 
         self.action_space = spaces.Discrete(641)
 
