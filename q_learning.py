@@ -1,11 +1,11 @@
 import gymnasium
-import gymnasium_env
+import aisd_examples
 import numpy as np
 import time
 import os
 import matplotlib.pyplot as plt
 
-env = gymnasium.make("aisd_examples/create_red_ball")
+env = gymnasium.make("aisd_examples/RedBall-V0")
 
 observation, info = env.reset()
 
