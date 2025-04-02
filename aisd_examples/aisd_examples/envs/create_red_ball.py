@@ -101,6 +101,8 @@ class RedBallEnv(gym.Env):
         return info
 
     def reset(self, seed=None, options=None):
+        super().reset(seed=seed)
+
         self.step_count = 0
         observation = self._get_obs()
         info = self._get_info()
