@@ -53,8 +53,9 @@ class RedBall(Node):
     detected_circles = cv2.HoughCircles(dilated_mask, cv2.HOUGH_GRADIENT, 1, 150, param1=100, param2=20, minRadius=2, maxRadius=2000)
     the_circle = None
     if detected_circles is not None:
-        self.redball_position = int(detected_circles[0, :])
-        for circle in detected_circles[0, :]:
+    	detected_circles_position = np.uint16(np.around(detected_circles))
+    	self.redball_position = int(detected_circles_position)
+    	for circle in detected_circles[0, :]:
             circled_orig = cv2.circle(frame, (int(circle[0]), int(circle[1])), int(circle[2]), (0,255,0),thickness=3)
             the_circle = (int(circle[0]), int(circle[1]))
         self.target_publisher.publish(self.br.cv2_to_imgmsg(circled_orig))
@@ -64,7 +65,7 @@ class RedBall(Node):
         self.get_logger().info('no ball detected')
 
 class RedBallEnv(gym.Env):
-    metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
+    metadata = {"render_modes": "rgb_array", "render_fps": 4}
 
     def __init__(self, render_mode=None, size=5):
         rclpy.init(args=None)
