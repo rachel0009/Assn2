@@ -23,6 +23,9 @@ class RedBall(Node):
       10)
     self.subscription # prevent unused variable warning
 
+    # track red ball position
+    self.redball_position  = None
+
     # A converter between ROS and OpenCV images
     self.br = CvBridge()
     self.target_publisher = self.create_publisher(Image, 'target_redball', 10)
@@ -50,22 +53,26 @@ class RedBall(Node):
     detected_circles = cv2.HoughCircles(dilated_mask, cv2.HOUGH_GRADIENT, 1, 150, param1=100, param2=20, minRadius=2, maxRadius=2000)
     the_circle = None
     if detected_circles is not None:
+        self.redball_position = int(detected_circles[0, :])
         for circle in detected_circles[0, :]:
             circled_orig = cv2.circle(frame, (int(circle[0]), int(circle[1])), int(circle[2]), (0,255,0),thickness=3)
             the_circle = (int(circle[0]), int(circle[1]))
         self.target_publisher.publish(self.br.cv2_to_imgmsg(circled_orig))
+        self.get_logger().info('ball detected')
     else:
+        self.redball_position = None
         self.get_logger().info('no ball detected')
 
 class RedBallEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
     def __init__(self, render_mode=None, size=5):
-
         rclpy.init(args=None)
+        self.redball = RedBall()
 
-        redball = RedBall()
-        rclpy.spin(redball)
+        self.step_count = 0
+        
+        rclpy.spin(self.redball)
 
         self.states = {}
         self.actions_dict = {}
@@ -73,49 +80,42 @@ class RedBallEnv(gym.Env):
         self.state = 0
 
         self.observation_space = spaces.Dict({
-            "state": spaces.Discrete(1)
+            "spaces": spaces.Box(low=0, high=640, shape=(1,), dtype=np.int32)
         })
 
-        self.action_space = spaces.Discrete(1)
-
-        self.window = None
-        self.clock = None
+        self.action_space = spaces.Discrete(641)
 
     def _get_obs(self):
-        return {"state":  self.state}
+        return {"position":  self.redball.redball_position}
 
     def _get_info(self):
-        info = {
-            "state": self.state, 
-        }
+        info = {None}
         return info
 
     def reset(self, seed=None, options=None):
-        # We need the following line to seed self.np_random
         super().reset(seed=seed)
 
+        self.step_count = 0
         observation = self._get_obs()
         info = self._get_info()
 
         return observation, info
 
-    def step(self, action=1):
-        action = int(action)
-
-        reward = 0
-        
-        terminated = False
-        reward = 100 if terminated else reward
+    def step(self, action):
+        self.redball.step(action)
+        rclpy.spin_once(self.redball)
+        self.step_count += 1
 
         observation = self._get_obs()
         info = self._get_info()
-
-        self.render()
-
+        
+        reward = -abs(observation["position"] - 320) / 320
+        terminated = (self.step_count == 100)
+        
         return observation, reward, terminated, False, info
 
     def render(self):
-        return
+        pass
 
     def close(self):
         redball.destroy_node()
