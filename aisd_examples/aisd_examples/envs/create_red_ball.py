@@ -32,12 +32,16 @@ class RedBall(Node):
     self.twist_publisher = self.create_publisher(Twist, 'cmd_vel', 10)
 
   def step(self, action):
+    if self.redball_position is None:
+        self.get_logger().info("No red ball detected, stopping movement.")
+        return
+
     twist = Twist()
     twist.angular.z = (action - 320) / 320 * (np.pi / 2)
     twist.linear.x = 0.2
 
     self.get_logger().info(f"Publishing twist: {twist}")
-    self.redball.twist_publisher.publish(twist)
+    self.twist_publisher.publish(twist)
 
   def listener_callback(self, msg):
     frame = self.br.imgmsg_to_cv2(msg)
@@ -79,17 +83,13 @@ class RedBallEnv(gym.Env):
         self.redball = RedBall()
 
         self.step_count = 0
-        
-        rclpy.spin(self.redball)
 
         self.states = {}
         self.actions_dict = {}
 
         self.state = 0
 
-        self.observation_space = spaces.Dict({
-            "spaces": spaces.Box(low=0, high=640, shape=(1,), dtype=np.int32)
-        })
+        self.observation_space = spaces.Box(low=0, high=640, shape=(1,), dtype=np.int32)
 
         self.action_space = spaces.Discrete(641)
 
@@ -101,8 +101,6 @@ class RedBallEnv(gym.Env):
         return info
 
     def reset(self, seed=None, options=None):
-        super().reset(seed=seed)
-
         self.step_count = 0
         observation = self._get_obs()
         info = self._get_info()
@@ -126,6 +124,6 @@ class RedBallEnv(gym.Env):
         pass
 
     def close(self):
-        redball.destroy_node()
+        self.redball.destroy_node()
         rclpy.shutdown()
         
