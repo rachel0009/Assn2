@@ -99,8 +99,7 @@ class RedBallEnv(gym.Env):
         return {"position":  self.redball.redball_position}
 
     def _get_info(self):
-        info = {None}
-        return info
+        return {"position":  self.redball.redball_position}
 
     def reset(self, seed=None, options=None):
         super().reset(seed=seed)
