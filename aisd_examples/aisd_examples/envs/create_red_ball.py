@@ -96,7 +96,7 @@ class RedBallEnv(gym.Env):
         self.action_space = spaces.Discrete(641)
 
     def _get_obs(self):
-        return {"position":  self.redball.redball_position}
+        return {"position": self.redball.redball_position if self.redball.redball_position is not None else 0}
 
     def _get_info(self):
         return {"position":  self.redball.redball_position}
