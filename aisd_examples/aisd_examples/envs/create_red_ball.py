@@ -58,8 +58,8 @@ class RedBall(Node):
     	for circle in detected_circles[0, :]:
             circled_orig = cv2.circle(frame, (int(circle[0]), int(circle[1])), int(circle[2]), (0,255,0),thickness=3)
             the_circle = (int(circle[0]), int(circle[1]))
-        self.target_publisher.publish(self.br.cv2_to_imgmsg(circled_orig))
-        self.get_logger().info('ball detected')
+            self.target_publisher.publish(self.br.cv2_to_imgmsg(circled_orig))
+            self.get_logger().info('ball detected')
     else:
         self.redball_position = None
         self.get_logger().info('no ball detected')
