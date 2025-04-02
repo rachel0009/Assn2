@@ -1,3 +1,4 @@
 aisd_examples.egg-info
 aisd_examples/aisd_examples/__pycache__
 aisd_examples/aisd_examples/envs/__pycache__
+/gym_env
