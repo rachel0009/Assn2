@@ -7,14 +7,11 @@ env = gymnasium.make(env_name, render_mode="human")
 
 observation, info = env.reset()
 
-# do a random action 1000 times
-while True:
-    action = 1
+for _ in range(1000):
+    action = env.action_space.sample()  # agent policy that uses the observation and info
     observation, reward, terminated, truncated, info = env.step(action)
 
     if terminated or truncated:
-        print(f"Terminated at: {info}")
         observation, info = env.reset()
-        print(f"New info: {info}")
 
 env.close()

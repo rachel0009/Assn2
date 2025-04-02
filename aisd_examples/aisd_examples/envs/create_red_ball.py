@@ -39,7 +39,8 @@ class RedBall(Node):
     bright_red_mask = cv2.inRange(hsv_conv_img, bright_red_lower_bounds, bright_red_upper_bounds)
 
     blurred_mask = cv2.GaussianBlur(bright_red_mask,(9,9),3,3)
-# some morphological operations (closing) to remove small blobs
+
+    # some morphological operations (closing) to remove small blobs
     erode_element = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
     dilate_element = cv2.getStructuringElement(cv2.MORPH_RECT, (8, 8))
     eroded_mask = cv2.erode(blurred_mask,erode_element)
@@ -64,21 +65,13 @@ class RedBallEnv(gym.Env):
         rclpy.init(args=None)
 
         redball = RedBall()
-
         rclpy.spin(redball)
-
-
-        self.size = size  # The size of the square grid
-        self.window_size = 256  # The size of the PyGame window
 
         self.states = {}
         self.actions_dict = {}
 
         self.state = 0
 
-        # Define your observation space as a simple Discrete space
-        # of integers, using the length of your dictionary from Step 
-        # c above.
         self.observation_space = spaces.Dict({
             "state": spaces.Discrete(1)
         })
