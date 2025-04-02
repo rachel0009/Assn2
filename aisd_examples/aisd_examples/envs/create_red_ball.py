@@ -2,11 +2,20 @@ import gymnasium as gym
 from gymnasium import spaces
 import numpy as np
 import random
+from rclpy.node import Node
 
 class RedBallEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
     def __init__(self, render_mode=None, size=5):
+
+        rclpy.init(args=args)
+
+        redball = RedBall()
+
+        rclpy.spin(redball)
+
+
         self.size = size  # The size of the square grid
         self.window_size = 256  # The size of the PyGame window
 
@@ -64,5 +73,6 @@ class RedBallEnv(gym.Env):
         return
 
     def close(self):
-        if self.window is not None:
-            self.mqi.stop()
+        redball.destroy_node()
+        rclpy.shutdown()
+        
