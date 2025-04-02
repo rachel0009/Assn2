@@ -53,8 +53,7 @@ class RedBall(Node):
     detected_circles = cv2.HoughCircles(dilated_mask, cv2.HOUGH_GRADIENT, 1, 150, param1=100, param2=20, minRadius=2, maxRadius=2000)
     the_circle = None
     if detected_circles is not None:
-    	detected_circles_position = np.uint16(np.around(detected_circles))
-    	self.redball_position = int(detected_circles_position)
+    	self.redball_position = int(detected_circles[0, 0, 0])
     	for circle in detected_circles[0, :]:
             circled_orig = cv2.circle(frame, (int(circle[0]), int(circle[1])), int(circle[2]), (0,255,0),thickness=3)
             the_circle = (int(circle[0]), int(circle[1]))
