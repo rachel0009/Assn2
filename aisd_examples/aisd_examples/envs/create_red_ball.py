@@ -31,6 +31,12 @@ class RedBall(Node):
     self.target_publisher = self.create_publisher(Image, 'target_redball', 10)
     self.twist_publisher = self.create_publisher(Twist, 'cmd_vel', 10)
 
+  def step(action):
+    twist = Twist()
+    twist.angular.z = (action - 320) / 320 * (np.pi / 2)
+    twist.linear.x = 0.2
+    self.redball.twist_publisher.publish(twist)
+
   def listener_callback(self, msg):
     frame = self.br.imgmsg_to_cv2(msg)
 
