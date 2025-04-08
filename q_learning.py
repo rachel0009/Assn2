@@ -31,10 +31,6 @@ for i in range(episodes):
     state_dict, info = env.reset()
     state = state_dict['position']  # State is directly the red ball's position
     
-    if state >= num_states:
-        print(f"Agent X: {(state_dict['agent'][0] + 1) }, Agent Y: {state_dict['agent'][1] + 1}")
-        raise ValueError(f"State {state} exceeds numstates {num_states}")
-
     steps = 0
     total_reward = 0
     done = False
