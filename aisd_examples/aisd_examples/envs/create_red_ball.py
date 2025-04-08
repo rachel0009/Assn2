@@ -34,10 +34,13 @@ class RedBall(Node):
 
   def step(self, action):
     twist = Twist()
+    max_angle = np.pi / 2  # 90 degrees
+    center_x = 320
 
-    if self.redball_position is None:
-        # Turn in place slowly to search for the ball
-        twist.angular.z = 0.5
+    if self.redball_position is not None:
+        offset = (self.redball_position - center_x) / center_x
+        rotation = np.clip(offset * max_angle, -max_angle, max_angle)
+        twist.angular.z = rotation
     else:
         # Move toward the red ball
         twist.angular.z = (action - 320) / 320 * (np.pi / 2)
@@ -112,10 +115,10 @@ class RedBallEnv(gym.Env):
         info = self._get_info()
         
         if observation['position'] == -1:
-            reward = -1000
+            reward = -1
         else:
-            reward = -abs(observation["position"] - 320) / 320
-            
+            reward = 1 -abs(observation["position"] - 320) / 320
+
         terminated = (self.step_count == 100)
         
         return observation, reward, terminated, False, info
