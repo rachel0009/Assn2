@@ -10,7 +10,7 @@ env = gymnasium.make("aisd_examples/RedBall-V0")
 observation, info = env.reset()
 
 # Number of states: 641 possible positions for the red ball (from 0 to 640)
-num_states = env.observation_space['position'].high + 1
+num_states = env.observation_space.n
 num_actions = env.action_space.n  # Number of possible actions
 
 # QTable : contains the Q-Values for every (state,action) pair
@@ -41,7 +41,7 @@ for i in range(episodes):
 
     while not done:
         os.system('clear')
-        print(f"Episode # {i + 1} / {episodes}")
+        print(f"Episode {i+1}: Return = {total_reward:.3f}")
         env.render()
         time.sleep(0.05)
 
@@ -77,7 +77,6 @@ for i in range(episodes):
 
     # Store episode results
     episode_rewards.append(total_reward)
-    steps_per_episode.append(steps)
 
     print(f"Accumulated Reward: {total_reward}")
     print(f"Done in {steps} steps")
@@ -93,12 +92,6 @@ plt.plot(range(episodes), episode_rewards, marker='o', linestyle='-')
 plt.xlabel("Episode")
 plt.ylabel("Total Reward")
 plt.title("Episode Returns")
-
-plt.subplot(1, 2, 2)
-plt.plot(range(episodes), steps_per_episode, marker='o', linestyle='-')
-plt.xlabel("Episode")
-plt.ylabel("Steps Taken")
-plt.title("Steps per Episode")
 
 plt.tight_layout()
 plt.show()

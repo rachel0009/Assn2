@@ -85,15 +85,11 @@ class RedBallEnv(gym.Env):
         self.redball = RedBall()
 
         self.step_count = 0
-
-        self.observation_space = spaces.Dict({
-            "position": spaces.Box(low=0, high=640, shape=(1,), dtype=np.int32)
-        })
-
+        self.observation_space = spaces.Discrete(641)
         self.action_space = spaces.Discrete(641)
 
     def _get_obs(self):
-        return {"position": self.redball.redball_position if self.redball.redball_position is not None else 0}
+        return {"position": self.redball.redball_position if self.redball.redball_position is not None else -1}
 
     def _get_info(self):
         return {"position":  self.redball.redball_position}
@@ -115,7 +111,11 @@ class RedBallEnv(gym.Env):
         observation = self._get_obs()
         info = self._get_info()
         
-        reward = -abs(observation["position"] - 320) / 320
+        if observation['position'] == -1:
+            reward = -1000
+        else:
+            reward = -abs(observation["position"] - 320) / 320
+            
         terminated = (self.step_count == 100)
         
         return observation, reward, terminated, False, info
