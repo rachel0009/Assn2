@@ -33,13 +33,15 @@ class RedBall(Node):
     self.twist_publisher = self.create_publisher(Twist, 'cmd_vel', 10)
 
   def step(self, action):
-    if self.redball_position is None:
-        # self.get_logger().info("No red ball detected, stopping movement.")
-        return
-        
     twist = Twist()
-    twist.angular.z = (action - 320) / 320 * (np.pi / 2)
 
+    if self.redball_position is None:
+        # Turn in place slowly to search for the ball
+        twist.angular.z = 0.5
+    else:
+        # Move toward the red ball
+        twist.angular.z = (action - 320) / 320 * (np.pi / 2)
+    
     # self.get_logger().info(f"Publishing twist: {twist}")
     self.twist_publisher.publish(twist)
 
@@ -70,10 +72,10 @@ class RedBall(Node):
             circled_orig = cv2.circle(frame, (int(circle[0]), int(circle[1])), int(circle[2]), (0,255,0),thickness=3)
             the_circle = (int(circle[0]), int(circle[1]))
             self.target_publisher.publish(self.br.cv2_to_imgmsg(circled_orig))
-            # self.get_logger().info('ball detected')
+            self.get_logger().info('ball detected')
     else:
         self.redball_position = None
-        # self.get_logger().info('no ball detected')
+        self.get_logger().info('no ball detected')
 
 class RedBallEnv(gym.Env):
     metadata = {"render_modes": "rgb_array", "render_fps": 4}
@@ -83,7 +85,6 @@ class RedBallEnv(gym.Env):
         self.redball = RedBall()
 
         self.step_count = 0
-        self.actions_dict = {}
 
         self.observation_space = spaces.Dict({
             "position": spaces.Box(low=0, high=640, shape=(1,), dtype=np.int32)
