@@ -30,6 +30,7 @@ for episode in range(episodes):
         print(f"Episode {episode+1}: Return = {total_reward:.3f}")
         position = observation
         action = choose_action(position)
+        print(f"Ball Position is at {position}, action made is {action}")
 
         observation, reward, terminated, truncated, info = env.step(action)
         done = terminated or truncated
