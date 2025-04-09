@@ -31,22 +31,24 @@ class RedBall(Node):
     self.br = CvBridge()
     self.target_publisher = self.create_publisher(Image, 'target_redball', 10)
     self.twist_publisher = self.create_publisher(Twist, 'cmd_vel', 10)
-
+    
   def step(self, action):
     twist = Twist()
-    max_angle = np.pi / 2  # 90 degrees
-    center_x = 320
+    max_rotation = np.deg2rad(15)  # Control turning rate
 
     if self.redball_position is not None:
-        offset = (self.redball_position - center_x) / center_x
-        rotation = np.clip(offset * max_angle, -max_angle, max_angle)
-        twist.angular.z = rotation
+	if action == 0:  # rotate left
+	    twist.angular.z = max_rotation
+	elif action == 1:  # stay still
+	    twist.angular.z = 0.0
+	elif action == 2:  # rotate right
+	    twist.angular.z = -max_rotation
     else:
-        # Move toward the red ball
-        twist.angular.z = (action - 320) / 320 * (np.pi / 2)
-    
-    # self.get_logger().info(f"Publishing twist: {twist}")
+	twist.angular.z = 0.0  # Ball not detected, don't move
+
     self.twist_publisher.publish(twist)
+
+
 
   def listener_callback(self, msg):
     frame = self.br.imgmsg_to_cv2(msg)
@@ -89,7 +91,7 @@ class RedBallEnv(gym.Env):
 
         self.step_count = 0
         self.observation_space = spaces.Discrete(641)
-        self.action_space = spaces.Discrete(641)
+        self.action_space = spaces.Discrete(3)
 
     def _get_obs(self):
         return {"position": self.redball.redball_position if self.redball.redball_position is not None else -1}

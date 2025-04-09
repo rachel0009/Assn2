@@ -71,7 +71,6 @@ for i in range(episodes):
     episode_rewards.append(total_reward)
 
     print(f"Accumulated Reward: {total_reward}")
-    print(f"Done in {steps} steps")
     time.sleep(1)
 
 env.close()
