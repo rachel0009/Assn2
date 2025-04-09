@@ -35,17 +35,17 @@ class RedBall(Node):
   def step(self, action):
     twist = Twist()
     max_rotation = np.deg2rad(15)  # Control turning rate
-
-    if self.redball_position is not None:
-        if action == 0:  # rotate left
-            twist.angular.z = max_rotation
-        elif action == 1:  # stay still
-            twist.angular.z = 0.0
-        elif action == 2:  # rotate right
-            twist.angular.z = -max_rotation
-    else:
-        twist.angular.z = 0.0  # Ball not detected, don't move
-
+    # Position: Left 1, Center 0, Right 2, 
+    # Not Detected 3
+    # Action: Left 1, Right 2, No Movement 0
+    
+    if action == 1:  # rotate left
+        twist.angular.z = max_rotation
+    elif action == 0:  # stay still
+        twist.angular.z = 0.0
+    elif action == 2:  # rotate right
+        twist.angular.z = -max_rotation
+   
     self.twist_publisher.publish(twist)
 
 
@@ -90,20 +90,24 @@ class RedBallEnv(gym.Env):
         self.redball = RedBall()
 
         self.step_count = 0
-        self.observation_space = spaces.Discrete(4)  # Left, Center, Right, Not Detected
-        self.action_space = spaces.Discrete(3) # Left, Right, No Movement
+
+        # Position: Left 1, Center 0, Right 2, 
+        # Not Detected 3
+        # Action: Left 1, Right 2, No Movement 0
+        self.observation_space = spaces.Discrete(4)  
+        self.action_space = spaces.Discrete(3)
 
     def _get_obs(self):
         position = self.redball.redball_position
         if position is None:
-            return 3  # Not detected
+            return 3  # no ball detected
 
-        if position < 280:
-            return 0  # Left
-        elif position > 360:
-            return 1  # Right
+        if position < 310:
+            return 1  # Left
+        elif position > 330:
+            return 2  # Right
         else:
-            return 2  # Center
+            return 0  # Center
 
     def _get_info(self):
         return {"position":  self.redball.redball_position}
@@ -127,7 +131,7 @@ class RedBallEnv(gym.Env):
 
         if obs == 3:  # Ball not detected
             reward = -1
-        elif obs == 1:  # Ball is centered
+        elif obs == 0:  # Ball is centered
             reward = 1
         else:  # Ball is off-center
             reward = -0.5

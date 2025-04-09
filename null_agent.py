@@ -12,14 +12,13 @@ episodes = 50
 episode_returns = []
 
 def choose_action(position):
-    if position == -1:
-        return 3  # no ball detected
-    elif position < 310:  # some tolerance from center
-        return 0  # rotate left
-    elif position > 330:
-        return 2  # rotate right
+    # Position: Left 1, Center 0, Right 2, 
+    # Not Detected 3
+    # Action: Left 1, Right 2, No Movement 0
+    if position == 3:
+        return 0  
     else:
-        return 1  # stay still
+        return position  
     
 for episode in range(episodes):
     observation, info = env.reset()
