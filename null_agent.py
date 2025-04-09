@@ -48,7 +48,7 @@ plt.subplot(1, 2, 1)
 plt.plot(range(episodes), episode_returns, marker='o', linestyle='-')
 plt.xlabel("Episode")
 plt.ylabel("Total Reward")
-plt.title("Episode Returns")
+plt.title("Episode Returns - NonRL")
 
 plt.tight_layout()
 plt.show()
