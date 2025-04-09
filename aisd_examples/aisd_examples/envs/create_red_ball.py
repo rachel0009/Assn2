@@ -37,14 +37,14 @@ class RedBall(Node):
     max_rotation = np.deg2rad(15)  # Control turning rate
 
     if self.redball_position is not None:
-	if action == 0:  # rotate left
-	    twist.angular.z = max_rotation
-	elif action == 1:  # stay still
-	    twist.angular.z = 0.0
-	elif action == 2:  # rotate right
-	    twist.angular.z = -max_rotation
-    else:
-	twist.angular.z = 0.0  # Ball not detected, don't move
+        if action == 0:  # rotate left
+            twist.angular.z = max_rotation
+        elif action == 1:  # stay still
+            twist.angular.z = 0.0
+        elif action == 2:  # rotate right
+            twist.angular.z = -max_rotation
+        else:
+            twist.angular.z = 0.0  # Ball not detected, don't move
 
     self.twist_publisher.publish(twist)
 
@@ -90,11 +90,20 @@ class RedBallEnv(gym.Env):
         self.redball = RedBall()
 
         self.step_count = 0
-        self.observation_space = spaces.Discrete(641)
-        self.action_space = spaces.Discrete(3)
+        self.observation_space = spaces.Discrete(4)  # Left, Center, Right, Not Detected
+        self.action_space = spaces.Discrete(3) # Left, Right, No Movement
 
     def _get_obs(self):
-        return {"position": self.redball.redball_position if self.redball.redball_position is not None else -1}
+        if self.redball.redball_position is None:
+            return 3  # Special state: Ball not detected
+
+        pos = self.redball.redball_position
+        if pos < 213:
+            return 0  # Left
+        elif pos < 426:
+            return 1  # Center
+        else:
+            return 2  # Right
 
     def _get_info(self):
         return {"position":  self.redball.redball_position}
@@ -113,17 +122,20 @@ class RedBallEnv(gym.Env):
         rclpy.spin_once(self.redball)
         self.step_count += 1
 
-        observation = self._get_obs()
+        obs = self._get_obs()
         info = self._get_info()
-        
-        if observation['position'] == -1:
+
+        if obs == 3:  # Ball not detected
             reward = -1
-        else:
-            reward = 1 - abs(observation["position"] - 320) / 320
+        elif obs == 1:  # Ball is centered
+            reward = 1
+        else:  # Ball is off-center
+            reward = -0.1
 
         terminated = (self.step_count == 100)
-        
-        return observation, reward, terminated, False, info
+
+        return obs, reward, terminated, False, info
+
 
     def render(self):
         pass

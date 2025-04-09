@@ -28,8 +28,7 @@ episode_rewards = []
 steps_per_episode = []
 
 for i in range(episodes):
-    state_dict, info = env.reset()
-    state = state_dict['position']  # State is directly the red ball's position
+    state, info = env.reset()
     
     total_reward = 0
     done = False
@@ -49,8 +48,7 @@ for i in range(episodes):
 
 
         # Take action
-        next_state_dict, reward, done, truncated, info = env.step(action)
-        next_state = next_state_dict['position'] # Next state is the red ball's new position
+        next_state, reward, done, truncated, info = env.step(action)
         
         # Update total reward
         total_reward += reward
