@@ -31,7 +31,6 @@ for i in range(episodes):
     state_dict, info = env.reset()
     state = state_dict['position']  # State is directly the red ball's position
     
-    steps = 0
     total_reward = 0
     done = False
 
@@ -40,9 +39,6 @@ for i in range(episodes):
         print(f"Episode {i+1}: Return = {total_reward:.3f}")
         env.render()
         time.sleep(0.05)
-
-        # count steps to finish game
-        steps += 1
 
          # act randomly sometimes to allow exploration
         if np.random.uniform() < epsilon:
@@ -87,7 +83,7 @@ plt.subplot(1, 2, 1)
 plt.plot(range(episodes), episode_rewards, marker='o', linestyle='-')
 plt.xlabel("Episode")
 plt.ylabel("Total Reward")
-plt.title("Episode Returns")
+plt.title("Episode Returns - QLearning")
 
 plt.tight_layout()
 plt.show()

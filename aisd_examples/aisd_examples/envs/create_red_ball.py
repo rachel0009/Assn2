@@ -117,7 +117,7 @@ class RedBallEnv(gym.Env):
         if observation['position'] == -1:
             reward = -1
         else:
-            reward = 1 -abs(observation["position"] - 320) / 320
+            reward = 1 - abs(observation["position"] - 320) / 320
 
         terminated = (self.step_count == 100)
         
