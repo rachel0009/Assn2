@@ -43,8 +43,8 @@ class RedBall(Node):
             twist.angular.z = 0.0
         elif action == 2:  # rotate right
             twist.angular.z = -max_rotation
-        else:
-            twist.angular.z = 0.0  # Ball not detected, don't move
+    else:
+        twist.angular.z = 0.0  # Ball not detected, don't move
 
     self.twist_publisher.publish(twist)
 
@@ -94,16 +94,16 @@ class RedBallEnv(gym.Env):
         self.action_space = spaces.Discrete(3) # Left, Right, No Movement
 
     def _get_obs(self):
-        if self.redball.redball_position is None:
-            return 3  # Special state: Ball not detected
+        position = self.redball.redball_position
+        if position is None:
+            return 3  # Not detected
 
-        pos = self.redball.redball_position
-        if pos < 213:
+        if position < 280:
             return 0  # Left
-        elif pos < 426:
-            return 1  # Center
+        elif position > 360:
+            return 1  # Right
         else:
-            return 2  # Right
+            return 2  # Center
 
     def _get_info(self):
         return {"position":  self.redball.redball_position}
@@ -130,7 +130,7 @@ class RedBallEnv(gym.Env):
         elif obs == 1:  # Ball is centered
             reward = 1
         else:  # Ball is off-center
-            reward = -0.1
+            reward = -0.5
 
         terminated = (self.step_count == 100)
 
