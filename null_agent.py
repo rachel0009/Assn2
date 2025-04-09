@@ -12,29 +12,29 @@ episodes = 50
 episode_returns = []
 
 def choose_action(position):
-    if position < 320:
-        return position + 10  # move right
-    elif position > 320:
-        return position - 10  # move left
+    if position == -1:
+        return 3  # no ball detected
+    elif position < 310:  # some tolerance from center
+        return 0  # rotate left
+    elif position > 330:
+        return 2  # rotate right
     else:
-        return 320  # stay
+        return 1  # stay still
     
 for episode in range(episodes):
     observation, info = env.reset()
     total_reward = 0
-
     done = False
-    step = 0
+
     while not done:
         os.system('clear')
         print(f"Episode {episode+1}: Return = {total_reward:.3f}")
-        position = observation['position']
+        position = observation
         action = choose_action(position)
 
         observation, reward, terminated, truncated, info = env.step(action)
         done = terminated or truncated
         total_reward += reward
-        step += 1
 
     print(f"Episode {episode+1}: Return = {total_reward:.3f}")
     episode_returns.append(total_reward)
