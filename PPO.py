@@ -5,6 +5,7 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.monitor import Monitor
 import matplotlib.pyplot as plt
 from stable_baselines3.common.monitor import load_results
+from stable_baselines3.common.callbacks import EvalCallback
 
 from config import ENV_NAME, EPISODES
 
