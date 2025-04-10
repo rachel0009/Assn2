@@ -10,23 +10,23 @@ import numpy as np
 from config import ENV_NAME, EPISODES
 
 def train_ppo():
-    env = Monitor(gymnasium.make(ENV_NAME))
+    #env = Monitor(gymnasium.make(ENV_NAME))
 
-    eval_callback = EvalCallback(
-        env,
-        best_model_save_path="./logs/",
-        log_path="./logs/",
-        eval_freq=1000,
-        deterministic=True,
-        render=False
-    )
+    #eval_callback = EvalCallback(
+    #    env,
+    #    best_model_save_path="./logs/",
+    #    log_path="./logs/",
+    #    eval_freq=1000,
+    #    deterministic=True,
+    #    render=False
+    #)
 
-    model = PPO("MlpPolicy", env, verbose=1)
-    model.learn(total_timesteps=10000, callback=eval_callback)
-    model.save("ppo_redball")
+    #model = PPO("MlpPolicy", env, verbose=1)
+    #model.learn(total_timesteps=10000, callback=eval_callback)
+    #model.save("ppo_redball")
 
     # Close environments
-    env.close()
+    #env.close()
 
     data = np.load("./logs/evaluations.npz")
     timesteps = data["timesteps"]
