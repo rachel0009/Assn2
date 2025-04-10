@@ -35,10 +35,11 @@ class RedBall(Node):
   def step(self, action):
     twist = Twist()
     max_rotation = np.deg2rad(15)  # Control turning rate
+
     # Position: Left 1, Center 0, Right 2, 
     # Not Detected 3
     # Action: Left 1, Right 2, No Movement 0
-    
+
     if action == 1:  # rotate left
         twist.angular.z = max_rotation
     elif action == 0:  # stay still
@@ -80,7 +81,7 @@ class RedBall(Node):
             # self.get_logger().info('ball detected')
     else:
         self.redball_position = None
-        self.get_logger().info('no ball detected')
+        #self.get_logger().info('no ball detected')
 
 class RedBallEnv(gym.Env):
     metadata = {"render_modes": "rgb_array", "render_fps": 4}
@@ -101,15 +102,19 @@ class RedBallEnv(gym.Env):
 
     def _get_obs(self):
         position = self.redball.redball_position
-        if position is None:
-            return 3  # no ball detected
+        obs = np.zeros(4, dtype=np.float32)
 
-        if position < 300:
-            return 1  # Left
+        if position is None:
+            obs[3] = 1.0  # No ball detected
+        elif position < 300:
+            obs[1] = 1.0  # Left
         elif position > 340:
-            return 2  # Right
+            obs[2] = 1.0  # Right
         else:
-            return 0  # Center
+            obs[0] = 1.0  # Center
+        
+        return obs
+
 
     def _get_info(self):
         return {"position":  self.redball.redball_position}
@@ -140,6 +145,7 @@ class RedBallEnv(gym.Env):
 
         terminated = (self.step_count == 100)
 
+        print(f"Step: {self.step_count}, Action: {action}, Obs: {obs}, Reward: {reward}")
         return obs, reward, terminated, False, info
 
 
