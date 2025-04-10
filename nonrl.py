@@ -14,7 +14,7 @@ def choose_action(position):
     else:
         return position  
     
-def run_non_rl(render=False):
+def run_non_rl():
     env = gymnasium.make(ENV_NAME)
     episodes = EPISODES
     episode_returns = []

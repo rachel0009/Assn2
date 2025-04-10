@@ -5,7 +5,7 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 
-def train_q_learning(render=False):
+def train_q_learning():
     env = gymnasium.make("aisd_examples/RedBall-V0")
     
     # Number of states and actions
@@ -26,18 +26,16 @@ def train_q_learning(render=False):
     episode_rewards = []
 
     for i in range(episodes):
-        obs, info = env.reset()
+        obs, _ = env.reset()
         state = int(np.argmax(obs))
         total_reward = 0
         done = False
 
         while not done:
-            if render:
-                os.system('clear')
-                print("Running Q-Learning...")
-                print(f"Episode {i+1}: Return = {total_reward:.3f}")
-                env.render()
-                time.sleep(0.05)
+            os.system('clear')
+            print("Running Q-Learning...")
+            print(f"Episode {i+1}: Return = {total_reward:.3f}")
+            time.sleep(0.05)
 
             # ε-greedy action selection
             if np.random.uniform() < epsilon:
@@ -60,9 +58,8 @@ def train_q_learning(render=False):
 
         episode_rewards.append(total_reward)
 
-        if render:
-            print(f"Accumulated Reward: {total_reward}")
-            time.sleep(1)
+        print(f"Accumulated Reward: {total_reward}")
+        time.sleep(1)
 
     env.close()
 

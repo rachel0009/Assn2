@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 from config import ENV_NAME, EPISODES
 
-def train_ppo(render = False):
+def train_ppo():
     env = gymnasium.make(ENV_NAME)
 
     # Initialize and train PPO model
