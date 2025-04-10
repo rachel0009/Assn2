@@ -74,3 +74,6 @@ def train_q_learning(render=False):
     plt.title("Episode Returns - QLearning")
     plt.tight_layout()
     plt.savefig("qlearning.png")
+
+if __name__ == "__main__":
+    train_q_learning()

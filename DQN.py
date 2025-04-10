@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 from config import ENV_NAME, EPISODES
 
-def train_ppo(render = False):
+def train_dqn(render = False):
     env = gymnasium.make(ENV_NAME)
 
     # Initialize and train PPO model
@@ -47,3 +47,6 @@ def train_ppo(render = False):
     plt.tight_layout()
     plt.savefig("dqn.png")
     plt.show()
+
+if __name__ == "__main__":
+    train_dqn()

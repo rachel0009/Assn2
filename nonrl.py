@@ -51,3 +51,6 @@ def run_non_rl(render=False):
     plt.tight_layout()
     plt.savefig("nonrl.png") 
     plt.show()
+
+if __name__ == "__main__":
+    run_non_rl()
