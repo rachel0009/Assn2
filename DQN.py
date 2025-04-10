@@ -17,7 +17,7 @@ def train_ppo():
         env,
         best_model_save_path="./dqn_logs/",
         log_path="./dqn_logs/",
-        eval_freq=1000,
+        eval_freq=EPISODES,
         deterministic=True,
         render=False
     )
@@ -30,10 +30,11 @@ def train_ppo():
     env.close()
 
     data = np.load("./dqn_logs/evaluations.npz")
-    episode_rewards = data["results"]
+    timesteps = data["timesteps"]
+    episode_rewards = data["results"].mean(axis=1)
 
     plt.figure(figsize=(12, 5))
-    plt.plot(range(1, len(episode_rewards) + 1), episode_rewards, marker='o', linestyle='-')
+    plt.plot(timesteps, episode_rewards, marker='o', linestyle='-')
     plt.title("Training Episode Rewards")
     plt.xlabel("Episode")
     plt.ylabel("Reward")
