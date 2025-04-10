@@ -134,11 +134,12 @@ class RedBallEnv(gym.Env):
         self.step_count += 1
 
         obs = self._get_obs()
+        state = int(np.argmax(obs))
         info = self._get_info()
 
-        if obs == 3:  # Ball not detected
+        if state == 3:  # Ball not detected
             reward = -1
-        elif obs == 0:  # Ball is centered
+        elif state == 0:  # Ball is centered
             reward = 1
         else:  # Ball is off-center
             reward = -0.5
