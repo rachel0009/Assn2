@@ -2,48 +2,40 @@ import os
 import gymnasium
 import aisd_examples
 from stable_baselines3 import PPO
-from stable_baselines3.common.evaluation import evaluate_policy
+from stable_baselines3.common.monitor import Monitor
 import matplotlib.pyplot as plt
+from stable_baselines3.common.monitor import load_results
 
 from config import ENV_NAME, EPISODES
 
 def train_ppo():
-    env = gymnasium.make(ENV_NAME)
+    env = Monitor(gymnasium.make(ENV_NAME))
 
-    # Initialize and train PPO model
-    model = PPO("MlpPolicy", env, verbose=1)
-    model.learn(total_timesteps=10000, log_interval=4)
-
-    # Save the model
-    model.save("ppo_redball")
-    del model
-
-    # Reload the model
-    model = PPO.load("ppo_redball")
-
-    # Re-create the environment for evaluation (no render to speed things up)
-    eval_env = gymnasium.make(ENV_NAME)
-
-    # Evaluate the policy and get individual episode rewards
-    episode_rewards = evaluate_policy(
-        model,
-        eval_env,
-        n_eval_episodes=EPISODES,
+    eval_callback = EvalCallback(
+        env,
+        best_model_save_path="./logs/",
+        log_path="./logs/",
+        eval_freq=1000,
         deterministic=True,
-        return_episode_rewards=True
+        render=False
     )
+
+    model = PPO("MlpPolicy", env, verbose=1, tensorboard_log="./ppo_tensorboard/")
+    model.learn(total_timesteps=10000, callback=eval_callback)
+    model.save("ppo_redball")
 
     # Close environments
     env.close()
-    eval_env.close()
 
-    # Plot the evaluation episode rewards
+    results = load_results("./logs/")
+    episode_rewards = results["r"]
+
     plt.figure(figsize=(12, 5))
     plt.plot(range(1, len(episode_rewards) + 1), episode_rewards, marker='o', linestyle='-')
+    plt.title("Training Episode Rewards")
     plt.xlabel("Episode")
-    plt.ylabel("Total Reward")
+    plt.ylabel("Reward")
     plt.title("Episode Returns - PPO")
-
     plt.tight_layout()
     plt.savefig("ppo.png")
     plt.show()
