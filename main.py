@@ -8,7 +8,7 @@ def run_all():
     q_learning_agent.train_q_learning()
     
     print("\nRunning Non-RL...")
-    non_rl_agent.run_baseline()
+    non_rl_agent.run_non_rl()
 
     print("\nRunning DQN...")
     dqn_agent.train_dqn()

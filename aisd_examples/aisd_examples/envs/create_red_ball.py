@@ -106,9 +106,9 @@ class RedBallEnv(gym.Env):
 
         if position is None:
             obs[3] = 1.0  # No ball detected
-        elif position < 300:
+        elif position < 250:
             obs[1] = 1.0  # Left
-        elif position > 340:
+        elif position > 390:
             obs[2] = 1.0  # Right
         else:
             obs[0] = 1.0  # Center
@@ -146,7 +146,7 @@ class RedBallEnv(gym.Env):
 
         terminated = (self.step_count == 100)
 
-        print(f"Step: {self.step_count}, Action: {action}, Obs: {obs}, Reward: {reward}")
+        print(f"Step: {self.step_count}, Action: {action}, Obs: {state}, Reward: {reward}")
         return obs, reward, terminated, False, info
 
 

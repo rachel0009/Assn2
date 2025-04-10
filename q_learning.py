@@ -4,9 +4,10 @@ import aisd_examples
 import numpy as np
 import time
 import matplotlib.pyplot as plt
+from config import ENV_NAME, EPISODES
 
 def train_q_learning():
-    env = gymnasium.make("aisd_examples/RedBall-V0")
+    env = gymnasium.make(ENV_NAME)
     
     # Number of states and actions
     num_states = env.observation_space.shape[0]
@@ -16,7 +17,7 @@ def train_q_learning():
     qtable = np.random.rand(num_states, num_actions)
 
     # Hyperparameters
-    episodes = 50
+    episodes = EPISODES
     gamma = 0.1
     epsilon = 0.08
     decay = 0.1
