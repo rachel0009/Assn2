@@ -21,21 +21,27 @@ def train_dqn():
     # Reload the model
     model = DQN.load("dqn_redball")
 
-    # Re-create the environment for evaluation (no render to speed things up)
-    # eval_env = gymnasium.make(ENV_NAME)
+    # Evaluation loop
+    n_episodes = EPISODES
+    episode_rewards = []
 
-    # Evaluate the policy and get individual episode rewards
-    episode_rewards = evaluate_policy(
-        model,
-        eval_env,
-        n_eval_episodes=EPISODES,
-        deterministic=True,
-        return_episode_rewards=True
-    )
+    for episode in range(n_episodes):
+        obs, _ = env.reset()
+        done = False
+        total_reward = 0
+
+        while not done:
+            action, _ = model.predict(obs, deterministic=True)
+            obs, reward, terminated, truncated, _ = env.step(action)
+            total_reward += reward
+            done = terminated or truncated
+
+        print(f"Episode {episode + 1}: Total Reward = {total_reward:.2f}")
+        episode_rewards.append(total_reward)
+
 
     # Close environments
     env.close()
-    # eval_env.close()
 
     # Plot the evaluation episode rewards
     plt.figure(figsize=(12, 5))
