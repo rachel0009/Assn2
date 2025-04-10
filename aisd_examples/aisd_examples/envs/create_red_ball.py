@@ -77,7 +77,7 @@ class RedBall(Node):
             circled_orig = cv2.circle(frame, (int(circle[0]), int(circle[1])), int(circle[2]), (0,255,0),thickness=3)
             the_circle = (int(circle[0]), int(circle[1]))
             self.target_publisher.publish(self.br.cv2_to_imgmsg(circled_orig))
-            self.get_logger().info('ball detected')
+            # self.get_logger().info('ball detected')
     else:
         self.redball_position = None
         self.get_logger().info('no ball detected')
@@ -94,7 +94,9 @@ class RedBallEnv(gym.Env):
         # Position: Left 1, Center 0, Right 2, 
         # Not Detected 3
         # Action: Left 1, Right 2, No Movement 0
-        self.observation_space = spaces.Discrete(4)  
+        # self.observation_space = spaces.Discrete(4) 
+        self.observation_space = spaces.Box(low=0, high=1, shape=(4,), dtype=np.float32)
+ 
         self.action_space = spaces.Discrete(3)
 
     def _get_obs(self):
@@ -102,9 +104,9 @@ class RedBallEnv(gym.Env):
         if position is None:
             return 3  # no ball detected
 
-        if position < 310:
+        if position < 300:
             return 1  # Left
-        elif position > 330:
+        elif position > 340:
             return 2  # Right
         else:
             return 0  # Center

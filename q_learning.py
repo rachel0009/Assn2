@@ -49,7 +49,7 @@ for i in range(episodes):
 
         # Take action
         next_state, reward, done, truncated, info = env.step(action)
-        print(f"Ball Position is at {next_state}, action made is {action}")
+        print(f"Ball Position is at {state}, action made is {action}")
         
         # Update total reward
         total_reward += reward
